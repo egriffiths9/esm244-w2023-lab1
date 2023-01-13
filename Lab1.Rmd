@@ -15,3 +15,32 @@ library(tmap)
 
 ```
 
+### Read in the data
+```{r}
+sf_trees <- read_csv(here("data", "sf_trees", "sf_trees.csv"))
+```
+
+### Exploring the data
+#### Do this in the console so it doesn't clog up your script
+#### names() tells you the names of the columns
+####  sf_trees %>% group_by(legal_status) %>% summarize(tree_count = n()) -- tells you to group the data by legal status and then summarize how many trees are in each legal status
+
+```{r}
+top_5_status <- sf_trees %>% 
+  group_by(legal_status) %>% 
+  summarize(tree_count = n()) %>%
+  slice_max(tree_count, n = 5) %>%
+  arrange(-tree_count)
+# this says make a new dataset from sf trees that's grouped by legal status and summarized by the number of trees in each legal status. And then just take the top 5 (the 5 legal statuses with the highest tree count) and arrange them by tree count from highest to lowest (I think that's what the - sign signifies)
+# slice max -- says find the vales of this variable that are the maximum and then just take the top n variables
+
+ggplot(data = top_5_status, aes(x = fct_reorder(legal_status, tree_count), y = tree_count)) +
+  geom_col() +
+  labs(y = "Tree count", x = "legal status") + 
+  coord_flip() +
+  theme_minimal()
+# adding in more x axis info -- fct_reorder means factor reorder the legal status by the tree count (instead of the default which for categorical variables might be alphabetical)
+# coord_flip means switching the direction of the x and y axes so the shape of the graph changes 
+```
+
+
